@@ -1,149 +1,26 @@
-<!doctype html>
-<html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#146c43">
-<title>Consegne Pizza</title>
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Zia Pizza 🍕</title>
 <style>
-:root{--green:#146c43;--green2:#198754;--bg:#f3f6f4;--ink:#17221b;--muted:#65736a;--line:#dce5df;--red:#b42318}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:env(safe-area-inset-top) 14px calc(22px + env(safe-area-inset-bottom));}
-header{background:var(--green);color:white;margin:0 -14px 16px;padding:22px 18px 18px;border-radius:0 0 22px 22px}
-h1{font-size:25px;margin:0 0 4px} header p{margin:0;opacity:.9;font-size:14px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px}
-.tab{border:0;border-radius:13px;padding:13px 8px;font-size:16px;font-weight:800;background:#e3ebe5;color:var(--green)}
-.tab.active{background:var(--green);color:white}
-.card{background:white;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px #163e2510}
-label{display:block;font-size:13px;font-weight:750;color:#425248;margin:0 0 7px}
-input,select{width:100%;font-size:18px;border:1px solid var(--line);border-radius:12px;padding:14px 12px;background:#fff;color:var(--ink);min-height:50px}
-.field{margin-bottom:14px}
-.payments{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.paybtn{min-height:62px;border:2px solid var(--line);border-radius:14px;background:white;font-size:18px;font-weight:850;color:var(--ink)}
-.paybtn.selected{border-color:var(--green2);background:#e8f5ed;color:var(--green)}
-.primary{width:100%;min-height:58px;border:0;border-radius:15px;background:var(--green2);color:white;font-size:18px;font-weight:850}
-.secondary{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px;font-weight:750;color:var(--ink)}
-.calc{background:#edf7f0;border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:space-between;margin:4px 0 16px}
-.calc span{font-size:14px;color:#425248;font-weight:700}.calc strong{font-size:26px;color:var(--green)}
-.small{font-size:12px;color:var(--muted);line-height:1.4;margin:10px 0 0}
-.hidden{display:none!important}
-.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.metric{padding:13px;border-radius:14px;background:#f4f7f5}
-.metric .name{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:7px}
-.metric .value{font-size:21px;font-weight:850;overflow-wrap:anywhere}
-h2{font-size:18px;margin:0 0 12px}
-.delivery{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
-.delivery-top{display:flex;justify-content:space-between;gap:10px;font-weight:800}
-.badge{font-size:11px;border-radius:8px;padding:5px 7px;background:#e8f5ed;color:var(--green);white-space:nowrap}
-.badge.pos{background:#e9f1ff;color:#164c9c}
-.delivery p{margin:7px 0 0;font-size:13px;color:var(--muted)}
-.actions{display:flex;gap:8px;margin-top:10px}.actions button{flex:1}
-.danger{color:var(--red)}
-.footer{font-size:12px;color:var(--muted);text-align:center;padding:8px}
-</style>
-</head>
-<body>
-<header><h1>🍕 Consegne Pizza</h1><p>Registra gli incassi in pochi tocchi</p></header>
-<div class="tabs">
-<button class="tab active" id="tabNew" type="button">＋ Nuova consegna</button>
-<button class="tab" id="tabSummary" type="button">€ Fine turno</button>
-</div>
-<section id="newView">
-<div class="card">
-<div class="field"><label for="customer">Cliente / riferimento (facoltativo)</label><input id="customer" placeholder="Es. Rossi, via Roma" autocomplete="off"></div>
-<div class="field"><label for="amount">Totale ordine (€)</label><input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Es. 18,00"></div>
-<div class="field"><label>Metodo di pagamento</label><div class="payments">
-<button class="paybtn selected" id="cash" type="button">💶 CASH</button><button class="paybtn" id="pos" type="button">💳 POS</button>
-</div></div>
-<div class="field"><label for="received" id="receivedLabel">Quanto ti dà il cliente (€)</label><input id="received" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Es. 20,00"></div>
-<div class="calc"><span>RESTO DA DARE</span><strong id="change">0,00 €</strong></div>
-<button class="primary" id="save" type="button">✓ SALVA CONSEGNA</button>
-<p class="small">I dati vengono salvati in questo browser sul telefono. Non inserire dati personali non necessari.</p>
-</div>
-</section>
-<section id="summaryView" class="hidden">
-<div class="card"><h2>Riepilogo del turno</h2>
-<div class="summary">
-<div class="metric"><div class="name">Totale ordini</div><div class="value" id="totalOrders">0,00 €</div></div>
-<div class="metric"><div class="name">Incassi POS</div><div class="value" id="totalPos">0,00 €</div></div>
-<div class="metric"><div class="name">Contanti ricevuti</div><div class="value" id="cashReceived">0,00 €</div></div>
-<div class="metric"><div class="name">Resto dato</div><div class="value" id="totalChange">0,00 €</div></div>
-<div class="metric" style="grid-column:1/-1;background:#e8f5ed"><div class="name">CONTANTI NETTI DA CONSEGNARE</div><div class="value" id="cashNet">0,00 €</div></div>
-<div class="metric"><div class="name">Consegne registrate</div><div class="value" id="count">0</div></div>
-</div>
-<p class="small">Il totale POS è separato dai contanti. I contanti netti sono i contanti ricevuti meno il resto restituito.</p>
-</div>
-</section>
-<div class="card">
-<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 style="margin:0">Consegne registrate</h2><button class="secondary" id="export" type="button">Esporta CSV</button></div>
-<div id="history"></div>
-<div class="actions"><button class="secondary" id="newShift" type="button">Nuovo turno</button></div>
-<p class="small">“Nuovo turno” cancella l'elenco salvato su questo dispositivo. Esporta prima il CSV se vuoi conservarne una copia.</p>
-</div>
-<div class="footer">Consegne Pizza · App semplice per uso personale</div>
-<script>
-const $ = id => document.getElementById(id);
-let method = "CASH";
-let deliveries = [];
-try { deliveries = JSON.parse(localStorage.getItem("pizzaDeliveriesV1") || "[]"); } catch(e) { deliveries = []; }
-const euro = n => (Number(n)||0).toLocaleString("it-IT",{style:"currency",currency:"EUR"});
-const num = el => Math.max(0, Number(String(el.value).replace(",",".")) || 0);
-function saveData(){localStorage.setItem("pizzaDeliveriesV1",JSON.stringify(deliveries));}
-function setMethod(m){
- method=m; $("cash").classList.toggle("selected",m==="CASH"); $("pos").classList.toggle("selected",m==="POS");
- $("receivedLabel").textContent=m==="CASH"?"Quanto ti dà il cliente (€)":"Importo pagato con POS (€)";
- if(m==="POS" && $("amount").value) $("received").value=$("amount").value;
- updateChange();
-}
-function updateChange(){
- const amount=num($("amount")), received=num($("received"));
- const change=method==="CASH"?Math.max(0,received-amount):0;
- $("change").textContent=euro(change);
-}
-$("cash").addEventListener("click",()=>setMethod("CASH"));
-$("pos").addEventListener("click",()=>setMethod("POS"));
-$("amount").addEventListener("input",()=>{if(method==="POS")$("received").value=$("amount").value;updateChange();});
-$("received").addEventListener("input",updateChange);
-$("save").addEventListener("click",()=>{
- const amount=num($("amount")), received=num($("received"));
- if(amount<=0){alert("Inserisci il totale dell'ordine.");$("amount").focus();return;}
- if(received<=0){alert("Inserisci quanto hai ricevuto dal cliente.");$("received").focus();return;}
- if(method==="CASH" && received<amount){alert("L'importo ricevuto è inferiore al totale dell'ordine. Controlla i valori.");return;}
- if(method==="POS" && Math.abs(received-amount)>0.009 && !confirm("L'importo POS è diverso dal totale dell'ordine. Vuoi salvare lo stesso?"))return;
- deliveries.unshift({id:Date.now(),customer:$("customer").value.trim(),amount,method,received,change:method==="CASH"?Math.max(0,received-amount):0,time:new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})});
- saveData();render();
- $("customer").value="";$("amount").value="";$("received").value="";setMethod("CASH");$("amount").focus();
-});
-function render(){
- const total=deliveries.reduce((s,d)=>s+d.amount,0);
- const pos=deliveries.filter(d=>d.method==="POS").reduce((s,d)=>s+d.received,0);
- const cash=deliveries.filter(d=>d.method==="CASH").reduce((s,d)=>s+d.received,0);
- const change=deliveries.reduce((s,d)=>s+d.change,0);
- $("totalOrders").textContent=euro(total);$("totalPos").textContent=euro(pos);$("cashReceived").textContent=euro(cash);
- $("totalChange").textContent=euro(change);$("cashNet").textContent=euro(cash-change);$("count").textContent=deliveries.length;
- const history=$("history");history.innerHTML="";
- if(!deliveries.length){history.innerHTML='<p class="small">Ancora nessuna consegna. Aggiungi la prima qui sopra.</p>';return;}
- deliveries.forEach((d,i)=>{
-  const el=document.createElement("div");el.className="delivery";
-  const top=document.createElement("div");top.className="delivery-top";
-  const name=document.createElement("span");name.textContent=(deliveries.length-i)+". "+(d.customer||"Consegna")+" · "+euro(d.amount);
-  const badge=document.createElement("span");badge.className="badge"+(d.method==="POS"?" pos":"");badge.textContent=d.method;
-  top.append(name,badge);el.append(top);
-  const p=document.createElement("p");p.textContent=d.time+" · Ricevuto: "+euro(d.received)+(d.method==="CASH"?" · Resto: "+euro(d.change):"");el.append(p);
-  const actions=document.createElement("div");actions.className="actions";
-  const del=document.createElement("button");del.className="secondary danger";del.textContent="Elimina";del.addEventListener("click",()=>{if(confirm("Eliminare questa consegna?")){deliveries=deliveries.filter(x=>x.id!==d.id);saveData();render();}});
-  actions.append(del);el.append(actions);history.append(el);
- });
-}
-$("tabNew").addEventListener("click",()=>{$("newView").classList.remove("hidden");$("summaryView").classList.add("hidden");$("tabNew").classList.add("active");$("tabSummary").classList.remove("active");});
-$("tabSummary").addEventListener("click",()=>{$("newView").classList.add("hidden");$("summaryView").classList.remove("hidden");$("tabNew").classList.remove("active");$("tabSummary").classList.add("active");render();});
-$("newShift").addEventListener("click",()=>{if(confirm("Vuoi cancellare tutte le consegne di questo turno? Esporta prima il CSV se vuoi conservarle.")){deliveries=[];saveData();render();}});
-$("export").addEventListener("click",()=>{
- const rows=[["Ora","Cliente","Totale ordine","Pagamento","Ricevuto","Resto"],...deliveries.slice().reverse().map(d=>[d.time,d.customer,d.amount.toFixed(2),d.method,d.received.toFixed(2),d.change.toFixed(2)])];
- const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n");
- const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="consegne-pizzeria.csv";a.click();URL.revokeObjectURL(url);
-});
-render();
-</script>
-</body>
-</html>
+:root{--red:#c62828;--green:#16803c;--bg:#f5f5f5}*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--bg);color:#222;padding:16px 12px 32px}main{max-width:650px;margin:auto}h1{text-align:center;margin:4px 0 18px;font-size:28px}h2{font-size:19px;margin:0 0 12px}.card{background:#fff;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0000000d}label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}input,button{font:inherit}input{width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;background:white}button{border:0;border-radius:10px;padding:12px 14px;font-weight:750;cursor:pointer}.primary{background:var(--green);color:white;width:100%;margin-top:14px}.secondary{background:#e8e8e8;color:#222}.red{background:var(--red);color:white}.method{display:flex;gap:10px;margin-top:8px}.method button{flex:1;background:#e8e8e8}.method button.active{background:#222;color:white}.hint{font-size:13px;color:#666;margin-top:5px}.result{font-size:18px;font-weight:800;margin-top:12px}.delivery{border:1px solid #e2e2e2;border-radius:10px;padding:12px;margin:10px 0}.delivery-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.delivery-title{font-weight:800;overflow-wrap:anywhere}.delivery small{color:#666}.delivery p{margin:8px 0}.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#f4f4f4;border-radius:10px;padding:13px}.stat .name{font-size:12px;color:#555;font-weight:750;text-transform:uppercase}.stat .value{font-size:21px;font-weight:850;margin-top:5px;overflow-wrap:anywhere}.big{background:#fff2cc;border:1px solid #f0d77d}.totalorders{font-size:14px;color:#666;margin-bottom:12px}.hidden{display:none!important}.notice{font-size:13px;color:#555;line-height:1.4}@media(max-width:380px){.stat .value{font-size:18px}}
+</style></head><body><main>
+<h1>Zia Pizza 🍕</h1>
+<section class="card" id="shiftCard"><h2>Inizio turno</h2><label for="rider">RIDER: SEGNA IL TUO NOME</label><input id="rider" placeholder="Nome rider" autocomplete="name"><label for="float">FONDO CASSA (€)</label><input id="float" type="number" min="0" step="0.01" value="45" inputmode="decimal"><button class="primary" id="startShift">INIZIA TURNO</button><p class="hint">Il fondo cassa iniziale è impostato a 45 €, ma puoi modificarlo.</p></section>
+<section class="card hidden" id="newCard"><h2>Nuova consegna</h2><label for="customer">Cliente / riferimento</label><input id="customer" placeholder="Es. Rossi / via Roma"><label for="orderTotal">IMPORTO ORDINE (€)</label><input id="orderTotal" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"><label>Metodo di pagamento</label><div class="method"><button id="cashBtn" class="active" type="button">CASH</button><button id="posBtn" type="button">POS</button></div>
+<div id="cashFields"><label for="cashGiven">IMPORTO RICEVUTO DAL CLIENTE (€)</label><input id="cashGiven" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"><div class="result" id="suggestedChange">Resto da dare: € 0,00</div><label for="cashReturned">RESTO RESTITUITO AL CLIENTE (€)</label><input id="cashReturned" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Inserisci il resto effettivo"><p class="hint">Il campo propone il resto calcolato. Se restituisci meno, la differenza viene conteggiata come mancia per te.</p><div class="result" id="cashTip">Resto / mancia: € 0,00</div></div>
+<div id="posFields" class="hidden"><label for="posPaid">IMPORTO PAGATO CON POS (€)</label><input id="posPaid" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"><label for="posTip">MANCIA EXTRA (€)</label><input id="posTip" type="number" min="0" step="0.01" inputmode="decimal" value="0"></div><button class="primary" id="saveDelivery">SALVA CONSEGNA</button></section>
+<section class="card hidden" id="listCard"><h2>Consegne del turno</h2><div id="deliveries"><p class="hint">Nessuna consegna registrata.</p></div></section>
+<section class="card hidden" id="summaryCard"><h2>Fine turno</h2><div id="summary"></div><button class="secondary" id="exportCsv" style="width:100%;margin-top:14px">ESPORTA CSV</button><button class="red" id="endShift" style="width:100%;margin-top:10px">CHIUDI TURNO</button><p class="notice">Esporta il CSV prima di chiudere o cambiare turno, così conservi il riepilogo.</p></section>
+</main><script>
+const $=id=>document.getElementById(id),money=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(n)||0),num=id=>Math.max(0,Number($(id).value)||0),cents=n=>Math.round((Number(n)||0)*100)/100;
+let deliveries=[],rider='',floatStart=45,method='CASH';
+function startShift(){rider=$('rider').value.trim();if(!rider){alert('Inserisci il nome del rider.');$('rider').focus();return}floatStart=num('float');deliveries=[];$('shiftCard').classList.add('hidden');['newCard','listCard','summaryCard'].forEach(id=>$(id).classList.remove('hidden'));render()}
+function setMethod(m){method=m;$('cashBtn').classList.toggle('active',m==='CASH');$('posBtn').classList.toggle('active',m==='POS');$('cashFields').classList.toggle('hidden',m!=='CASH');$('posFields').classList.toggle('hidden',m!=='POS')}
+function updateCash(){let due=cents(Math.max(0,num('cashGiven')-num('orderTotal')));$('suggestedChange').textContent='Resto da dare: '+money(due);if(!$('cashReturned').dataset.edited||$('cashReturned').value===''){$('cashReturned').value=due.toFixed(2);$('cashReturned').dataset.edited=''}$('cashTip').textContent='Resto / mancia: '+money(Math.max(0,due-num('cashReturned')))}
+function addDelivery(){let customer=$('customer').value.trim(),total=cents(num('orderTotal'));if(!total){alert('Inserisci l’importo dell’ordine.');return}let d={id:Date.now()+Math.random(),rider,customer:customer||'—',total,method};if(method==='CASH'){let given=cents(num('cashGiven'));if(given<total){alert('L’importo ricevuto deve essere almeno pari all’ordine.');return}let due=cents(given-total),returned=cents(num('cashReturned'));if(returned>due){alert('Il resto restituito non può superare il resto calcolato.');return}d.received=given;d.changeDue=due;d.changeReturned=returned;d.tip=cents(due-returned)}else{let paid=cents(num('posPaid'));if(paid<total){alert('L’importo pagato con POS deve essere almeno pari all’ordine.');return}d.received=paid;d.changeDue=0;d.changeReturned=0;d.tip=cents(num('posTip'))}deliveries.push(d);['customer','orderTotal','cashGiven','cashReturned','posPaid'].forEach(id=>$(id).value='');$('cashReturned').dataset.edited='';$('posTip').value='0';setMethod('CASH');render()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){let list=$('deliveries');if(!deliveries.length)list.innerHTML='<p class="hint">Nessuna consegna registrata.</p>';else list.innerHTML=deliveries.map(d=>`<div class="delivery"><div class="delivery-head"><div><div class="delivery-title">${escapeHtml(d.customer)}</div><small>${d.method} · ${money(d.total)}</small></div><button class="red" data-del="${d.id}">ELIMINA</button></div><p>${d.method==='CASH'?'Ricevuto: '+money(d.received)+' · Resto restituito: '+money(d.changeReturned):'POS: '+money(d.received)+' · Mancia extra: '+money(d.tip)}</p><p><b>RESTO / MANCIA: ${money(d.tip)}</b></p></div>`).join('');list.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{if(confirm('SEI SICURO DI VOLER ELIMINARE LA CONSEGNA? SI/NO')){deliveries=deliveries.filter(d=>String(d.id)!==b.dataset.del);render()}}));
+let cash=deliveries.filter(d=>d.method==='CASH'),pos=deliveries.filter(d=>d.method==='POS'),cashOrders=cash.reduce((s,d)=>s+d.total,0),posOrders=pos.reduce((s,d)=>s+d.total,0),cashReceived=cash.reduce((s,d)=>s+d.received,0),cashTips=cash.reduce((s,d)=>s+d.tip,0),posTips=pos.reduce((s,d)=>s+d.tip,0),returned=cash.reduce((s,d)=>s+d.changeReturned,0),cashPouch=cents(floatStart+cashReceived-returned),handover=cents(cashReceived-returned-floatStart-cashTips);
+$('summary').innerHTML=`<div class="totalorders">Totale ordini registrati: ${deliveries.length}</div><div class="statgrid"><div class="stat"><div class="name">Fondo cassa iniziale</div><div class="value">${money(floatStart)}</div></div><div class="stat"><div class="name">Incasso ordini POS</div><div class="value">${money(posOrders)}</div></div><div class="stat"><div class="name">Mance POS</div><div class="value">${money(posTips)}</div></div><div class="stat"><div class="name">Ordini CASH da rendicontare</div><div class="value">${money(cashOrders)}</div></div><div class="stat"><div class="name">Resto / mancia CASH (tuo)</div><div class="value">${money(cashTips)}</div></div><div class="stat big"><div class="name">Contanti fisici nel borsello</div><div class="value">${money(cashPouch)}</div></div><div class="stat big"><div class="name">Contanti da consegnare alla pizzeria</div><div class="value">${money(handover)}</div></div><div class="stat"><div class="name">Totale mance tue</div><div class="value">${money(cents(cashTips+posTips))}</div></div></div><p class="hint">I contanti da consegnare escludono fondo cassa iniziale e mance CASH. Verifica sempre il contante fisico prima della chiusura.</p>`}
+function exportCsv(){let rows=[['Rider','Cliente/riferimento','Metodo','Importo ordine','Importo ricevuto/POS','Resto calcolato','Resto restituito','Mancia CASH','Mancia POS','Fondo cassa iniziale']];deliveries.forEach(d=>rows.push([d.rider,d.customer,d.method,d.total,d.received,d.changeDue,d.changeReturned,d.method==='CASH'?d.tip:0,d.method==='POS'?d.tip:0,floatStart]));rows.push(['RIEPILOGO']);rows.push(['Rider',rider]);rows.push(['Fondo cassa iniziale',floatStart]);rows.push(['Incasso ordini POS',deliveries.filter(d=>d.method==='POS').reduce((s,d)=>s+d.total,0)]);rows.push(['Mance POS',deliveries.filter(d=>d.method==='POS').reduce((s,d)=>s+d.tip,0)]);rows.push(['Ordini CASH da rendicontare',deliveries.filter(d=>d.method==='CASH').reduce((s,d)=>s+d.total,0)]);rows.push(['Mance CASH',deliveries.filter(d=>d.method==='CASH').reduce((s,d)=>s+d.tip,0)]);let cash=deliveries.filter(d=>d.method==='CASH'),received=cash.reduce((s,d)=>s+d.received,0),returned=cash.reduce((s,d)=>s+d.changeReturned,0),tips=cash.reduce((s,d)=>s+d.tip,0);rows.push(['Contanti fisici nel borsello',cents(floatStart+received-returned)]);rows.push(['Contanti da consegnare alla pizzeria',cents(received-returned-floatStart-tips)]);rows.push(['Totale mance tue',cents(deliveries.reduce((s,d)=>s+d.tip,0))]);let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n'),blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia_pizza_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)}
+$('startShift').addEventListener('click',startShift);$('cashBtn').addEventListener('click',()=>setMethod('CASH'));$('posBtn').addEventListener('click',()=>setMethod('POS'));['orderTotal','cashGiven'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='orderTotal')$('cashReturned').dataset.edited='';updateCash()}));$('cashReturned').addEventListener('input',()=>{$('cashReturned').dataset.edited='yes';updateCash()});$('saveDelivery').addEventListener('click',addDelivery);$('exportCsv').addEventListener('click',exportCsv);$('endShift').addEventListener('click',()=>{if(!confirm('Hai esportato il CSV? Vuoi chiudere il turno e tornare all’inizio?'))return;$('rider').value='';$('float').value='45';$('shiftCard').classList.remove('hidden');['newCard','listCard','summaryCard'].forEach(id=>$(id).classList.add('hidden'))});updateCash();
+</script></body></html>
